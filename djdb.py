@@ -5,8 +5,11 @@ from gi.repository import Gtk
 from os.path import dirname, realpath, join, expanduser
 import cPickle
 from gladeobjects import get_glade_objects, field_names
-
 from LibScan import LibScan
+# Hack to fix unicode issues in Python 2.7
+import sys
+reload(sys)
+sys.setdefaultencoding("UTF8")
 
 home = expanduser("~")
 configfile = join(home, ".djdb.p")
