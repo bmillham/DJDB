@@ -183,10 +183,11 @@ CREATE TABLE IF NOT EXISTS `groups` (
 """
 
 database_tables['group_perms'] = """
-CREATE TABLE IF NOT EXISTS `groups` (
-  `id` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
+CREATE TABLE IF NOT EXISTS `group_perms` (
+  `group_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `permission_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `group_id` (`group_id`),
+  KEY `permission_id` (`permission_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 """
 

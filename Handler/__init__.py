@@ -173,7 +173,7 @@ class Handler(object):
             self.gobject['main_window'].show()
 
     def create_database(self):
-        from LibScan.mysql_ampache import database_tables, database_creator, catalog_creator, catalog_local_creator
+        from LibScan.mysql_ampache import database_tables, database_constraints, database_creator, catalog_creator, catalog_local_creator
         self.db.autocommit(True)
         cursor = self.db.cursor()
         print "Creating the database"
@@ -184,6 +184,11 @@ class Handler(object):
             print "Creating table {}".format(table)
             cursor.execute(creator)
         print "Tables created"
+        print "Creating constraints"
+        for table, creator in database_constraints.iteritems():
+            print "Creating constraint {}".format(table)
+            cursor.execute(creator)
+        print "Constraints created"
         print "Creating catalog entry"
         now = int(time())
         cursor.execute(catalog_creator, (self.catalog_name, now, now, now))
