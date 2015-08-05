@@ -297,6 +297,38 @@ class Handler(object):
     def on_menu_edit_properties_selected(self, *args):
         self.gobject['preferences_dialog'].show_all()
 
+    def on_upgrade_imagemenuitem_activate(self, *args):
+        self.gobject['upgrade_dialog'].show_all()
+
+    def on_upgrade_dialog_yes_button_clicked(self, *args):
+        from LibScan.mysql_ampache import database_tables, database_constraints, database_creator, catalog_creator, catalog_local_creator
+        self.db.autocommit(True)
+        cursor = self.db.cursor()
+        print "Updating the database"
+        #cursor.execute("USE `{}`".format(self.database))
+        print "Creating the tables"
+        for table, creator in database_tables.iteritems():
+            print "Creating table {}".format(table)
+            try:
+                cursor.execute(creator)
+            except:
+                print "Table {} already in database".format(table)
+        print "Tables created"
+        print "Creating constraints"
+        for table, creator in database_constraints.iteritems():
+            print "Creating constraint {}".format(table)
+            try:
+                cursor.execute(creator)
+            except:
+                print "Constraint {} already in database".format(table)
+        print "Constraints created"
+        self.db_connect()
+        self.gobject['upgrade_dialog'].hide()
+
+    def on_upgrade_dialog_no_button_clicked(self, *args):
+        self.gobject['upgrade_dialog'].hide()
+        return True
+
     def on_preferences_dialog_show(self, *args):
         self._build_catalog_tree()
         self.gobject['database_server_entry'].set_text(self.options['db']['server'])

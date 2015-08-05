@@ -9,7 +9,7 @@ catalog_local_creator = """INSERT INTO catalog_local (path, catalog_id) VALUES (
 database_tables = {}
 database_constraints = {}
 
-database_tables['access_list'] = """CREATE TABLE IF NOT EXISTS `access_list` (
+database_tables['access_list'] = """CREATE TABLE `access_list` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `start` varbinary(255) NOT NULL,
@@ -26,7 +26,7 @@ database_tables['access_list'] = """CREATE TABLE IF NOT EXISTS `access_list` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
 database_tables['accounts'] = """
-CREATE TABLE IF NOT EXISTS `accounts` (
+CREATE TABLE `accounts` (
   `id` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(128) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `accounts` (
 """
 
 database_tables['account_groups'] = """
-CREATE TABLE IF NOT EXISTS `account_groups` (
+CREATE TABLE `account_groups` (
   `account_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `group_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   KEY `account_id` (`account_id`),
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `account_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 """
 
-database_tables['album'] = """CREATE TABLE IF NOT EXISTS `album` (
+database_tables['album'] = """CREATE TABLE `album` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `prefix` varchar(32) CHARACTER SET utf8 DEFAULT NULL,
@@ -58,7 +58,7 @@ database_tables['album'] = """CREATE TABLE IF NOT EXISTS `album` (
   FULLTEXT KEY `idjc` (`name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['artist'] = """CREATE TABLE IF NOT EXISTS `artist` (
+database_tables['artist'] = """CREATE TABLE `artist` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `prefix` varchar(32) CHARACTER SET utf8 DEFAULT NULL,
@@ -73,7 +73,7 @@ database_tables['artist'] = """CREATE TABLE IF NOT EXISTS `artist` (
   FULLTEXT KEY `idjc` (`name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['broadcast'] = """CREATE TABLE IF NOT EXISTS `broadcast` (
+database_tables['broadcast'] = """CREATE TABLE `broadcast` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user` int(11) unsigned NOT NULL,
   `name` varchar(64) CHARACTER SET utf8 DEFAULT NULL,
@@ -86,7 +86,7 @@ database_tables['broadcast'] = """CREATE TABLE IF NOT EXISTS `broadcast` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['catalog'] = """CREATE TABLE IF NOT EXISTS `catalog` (
+database_tables['catalog'] = """CREATE TABLE `catalog` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `catalog_type` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
@@ -101,14 +101,14 @@ database_tables['catalog'] = """CREATE TABLE IF NOT EXISTS `catalog` (
   KEY `enabled` (`enabled`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['catalog_local'] = """CREATE TABLE IF NOT EXISTS `catalog_local` (
+database_tables['catalog_local'] = """CREATE TABLE `catalog_local` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `path` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `catalog_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['catalog_remote'] = """CREATE TABLE IF NOT EXISTS `catalog_remote` (
+database_tables['catalog_remote'] = """CREATE TABLE `catalog_remote` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `uri` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `username` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
@@ -117,7 +117,7 @@ database_tables['catalog_remote'] = """CREATE TABLE IF NOT EXISTS `catalog_remot
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['channel'] = """CREATE TABLE IF NOT EXISTS `channel` (
+database_tables['channel'] = """CREATE TABLE `channel` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(64) CHARACTER SET utf8 DEFAULT NULL,
   `description` varchar(256) CHARACTER SET utf8 DEFAULT NULL,
@@ -142,7 +142,7 @@ database_tables['channel'] = """CREATE TABLE IF NOT EXISTS `channel` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['democratic'] = """CREATE TABLE IF NOT EXISTS `democratic` (
+database_tables['democratic'] = """CREATE TABLE `democratic` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(64) CHARACTER SET utf8 DEFAULT NULL,
   `cooldown` tinyint(4) unsigned DEFAULT NULL,
@@ -155,7 +155,7 @@ database_tables['democratic'] = """CREATE TABLE IF NOT EXISTS `democratic` (
   KEY `primary_2` (`primary`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['dynamic_playlist'] = """CREATE TABLE IF NOT EXISTS `dynamic_playlist` (
+database_tables['dynamic_playlist'] = """CREATE TABLE `dynamic_playlist` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `user` int(11) NOT NULL,
@@ -164,7 +164,7 @@ database_tables['dynamic_playlist'] = """CREATE TABLE IF NOT EXISTS `dynamic_pla
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['dynamic_playlist_data'] = """CREATE TABLE IF NOT EXISTS `dynamic_playlist_data` (
+database_tables['dynamic_playlist_data'] = """CREATE TABLE `dynamic_playlist_data` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `dynamic_id` int(11) unsigned NOT NULL,
   `field` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
@@ -175,7 +175,7 @@ database_tables['dynamic_playlist_data'] = """CREATE TABLE IF NOT EXISTS `dynami
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
 database_tables['groups'] = """
-CREATE TABLE IF NOT EXISTS `groups` (
+CREATE TABLE `groups` (
   `id` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
   `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -183,7 +183,7 @@ CREATE TABLE IF NOT EXISTS `groups` (
 """
 
 database_tables['group_perms'] = """
-CREATE TABLE IF NOT EXISTS `group_perms` (
+CREATE TABLE `group_perms` (
   `group_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `permission_id` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   KEY `group_id` (`group_id`),
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS `group_perms` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci
 """
 
-database_tables['image'] = """CREATE TABLE IF NOT EXISTS `image` (
+database_tables['image'] = """CREATE TABLE `image` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `image` mediumblob NOT NULL,
   `mime` varchar(64) CHARACTER SET utf8 DEFAULT NULL,
@@ -203,7 +203,7 @@ database_tables['image'] = """CREATE TABLE IF NOT EXISTS `image` (
   KEY `object_id` (`object_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['ip_history'] = """CREATE TABLE IF NOT EXISTS `ip_history` (
+database_tables['ip_history'] = """CREATE TABLE `ip_history` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user` int(11) NOT NULL,
   `ip` varbinary(255) DEFAULT NULL,
@@ -216,7 +216,7 @@ database_tables['ip_history'] = """CREATE TABLE IF NOT EXISTS `ip_history` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
 database_tables['listeners'] = """
-CREATE TABLE IF NOT EXISTS `listeners` (
+CREATE TABLE `listeners` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `current` int(11) NOT NULL DEFAULT '0',
   `max` int(11) NOT NULL DEFAULT '0',
@@ -224,7 +224,7 @@ CREATE TABLE IF NOT EXISTS `listeners` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1
 """
 
-database_tables['live_stream'] = """CREATE TABLE IF NOT EXISTS `live_stream` (
+database_tables['live_stream'] = """CREATE TABLE `live_stream` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `site_url` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
@@ -238,7 +238,7 @@ database_tables['live_stream'] = """CREATE TABLE IF NOT EXISTS `live_stream` (
   KEY `name` (`name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['localplay_httpq'] = """CREATE TABLE IF NOT EXISTS `localplay_httpq` (
+database_tables['localplay_httpq'] = """CREATE TABLE `localplay_httpq` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `owner` int(11) NOT NULL,
@@ -249,7 +249,7 @@ database_tables['localplay_httpq'] = """CREATE TABLE IF NOT EXISTS `localplay_ht
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['localplay_mpd'] = """CREATE TABLE IF NOT EXISTS `localplay_mpd` (
+database_tables['localplay_mpd'] = """CREATE TABLE `localplay_mpd` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `owner` int(11) NOT NULL,
@@ -260,7 +260,7 @@ database_tables['localplay_mpd'] = """CREATE TABLE IF NOT EXISTS `localplay_mpd`
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['localplay_shoutcast'] = """CREATE TABLE IF NOT EXISTS `localplay_shoutcast` (
+database_tables['localplay_shoutcast'] = """CREATE TABLE `localplay_shoutcast` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `owner` int(11) NOT NULL,
@@ -272,7 +272,7 @@ database_tables['localplay_shoutcast'] = """CREATE TABLE IF NOT EXISTS `localpla
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
 database_tables['mistags'] = """
-CREATE TABLE IF NOT EXISTS `mistags` (
+CREATE TABLE `mistags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `track_id` int(11) NOT NULL,
   `reported_by` text NOT NULL,
@@ -285,7 +285,7 @@ CREATE TABLE IF NOT EXISTS `mistags` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8
 """
 
-database_tables['now_playing'] = """CREATE TABLE IF NOT EXISTS `now_playing` (
+database_tables['now_playing'] = """CREATE TABLE `now_playing` (
   `id` varchar(64) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `object_id` int(11) unsigned NOT NULL,
   `object_type` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
@@ -296,7 +296,7 @@ database_tables['now_playing'] = """CREATE TABLE IF NOT EXISTS `now_playing` (
   KEY `expire` (`expire`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['object_count'] = """CREATE TABLE IF NOT EXISTS `object_count` (
+database_tables['object_count'] = """CREATE TABLE `object_count` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `object_type` enum('album','artist','song','playlist','genre','catalog','live_stream','video') CHARACTER SET utf8 DEFAULT NULL,
   `object_id` int(11) unsigned NOT NULL DEFAULT '0',
@@ -310,7 +310,7 @@ database_tables['object_count'] = """CREATE TABLE IF NOT EXISTS `object_count` (
   KEY `date` (`date`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['played'] = """CREATE TABLE IF NOT EXISTS `played` (
+database_tables['played'] = """CREATE TABLE `played` (
   `played_id` int(11) NOT NULL AUTO_INCREMENT,
   `track_id` int(11) NOT NULL,
   `date_played` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -323,7 +323,7 @@ database_tables['played'] = """CREATE TABLE IF NOT EXISTS `played` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
 database_tables['permissions'] = """
-CREATE TABLE IF NOT EXISTS `permissions` (
+CREATE TABLE `permissions` (
   `id` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
   `description` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
@@ -331,7 +331,7 @@ CREATE TABLE IF NOT EXISTS `permissions` (
 """
 
 
-database_tables['player_control'] = """CREATE TABLE IF NOT EXISTS `player_control` (
+database_tables['player_control'] = """CREATE TABLE `player_control` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user` int(11) unsigned NOT NULL,
   `cmd` varchar(32) CHARACTER SET utf8 DEFAULT NULL,
@@ -342,7 +342,7 @@ database_tables['player_control'] = """CREATE TABLE IF NOT EXISTS `player_contro
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['playlist'] = """CREATE TABLE IF NOT EXISTS `playlist` (
+database_tables['playlist'] = """CREATE TABLE `playlist` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `user` int(11) DEFAULT NULL,
@@ -353,7 +353,7 @@ database_tables['playlist'] = """CREATE TABLE IF NOT EXISTS `playlist` (
   KEY `type` (`type`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['playlist_data'] = """CREATE TABLE IF NOT EXISTS `playlist_data` (
+database_tables['playlist_data'] = """CREATE TABLE `playlist_data` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `playlist` int(11) unsigned NOT NULL DEFAULT '0',
   `object_id` int(11) unsigned DEFAULT NULL,
@@ -363,7 +363,7 @@ database_tables['playlist_data'] = """CREATE TABLE IF NOT EXISTS `playlist_data`
   KEY `playlist` (`playlist`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['preference'] = """CREATE TABLE IF NOT EXISTS `preference` (
+database_tables['preference'] = """CREATE TABLE `preference` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `value` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
@@ -376,7 +376,7 @@ database_tables['preference'] = """CREATE TABLE IF NOT EXISTS `preference` (
   KEY `name` (`name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['rating'] = """CREATE TABLE IF NOT EXISTS `rating` (
+database_tables['rating'] = """CREATE TABLE `rating` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user` int(11) NOT NULL,
   `object_type` enum('artist','album','song','steam','video') CHARACTER SET utf8 DEFAULT NULL,
@@ -387,7 +387,7 @@ database_tables['rating'] = """CREATE TABLE IF NOT EXISTS `rating` (
   KEY `object_id` (`object_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['recommendation'] = """CREATE TABLE IF NOT EXISTS `recommendation` (
+database_tables['recommendation'] = """CREATE TABLE `recommendation` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `object_type` varchar(32) CHARACTER SET utf8 DEFAULT NULL,
   `object_id` int(11) unsigned NOT NULL,
@@ -395,7 +395,7 @@ database_tables['recommendation'] = """CREATE TABLE IF NOT EXISTS `recommendatio
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['recommendation_item'] = """CREATE TABLE IF NOT EXISTS `recommendation_item` (
+database_tables['recommendation_item'] = """CREATE TABLE `recommendation_item` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `recommendation` int(11) unsigned NOT NULL,
   `recommendation_id` int(11) unsigned DEFAULT NULL,
@@ -405,7 +405,7 @@ database_tables['recommendation_item'] = """CREATE TABLE IF NOT EXISTS `recommen
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['requestlist'] = """CREATE TABLE IF NOT EXISTS `requestlist` (
+database_tables['requestlist'] = """CREATE TABLE `requestlist` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `songID` int(11) NOT NULL DEFAULT '0',
   `t_stamp` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -421,7 +421,7 @@ database_tables['requestlist'] = """CREATE TABLE IF NOT EXISTS `requestlist` (
   KEY `status` (`status`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['search'] = """CREATE TABLE IF NOT EXISTS `search` (
+database_tables['search'] = """CREATE TABLE `search` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user` int(11) NOT NULL,
   `type` enum('private','public') CHARACTER SET utf8 DEFAULT NULL,
@@ -431,7 +431,7 @@ database_tables['search'] = """CREATE TABLE IF NOT EXISTS `search` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['session'] = """CREATE TABLE IF NOT EXISTS `session` (
+database_tables['session'] = """CREATE TABLE `session` (
   `id` varchar(256) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `username` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
   `expire` int(11) unsigned NOT NULL DEFAULT '0',
@@ -444,7 +444,7 @@ database_tables['session'] = """CREATE TABLE IF NOT EXISTS `session` (
   KEY `type` (`type`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['session_stream'] = """CREATE TABLE IF NOT EXISTS `session_stream` (
+database_tables['session_stream'] = """CREATE TABLE `session_stream` (
   `id` varchar(64) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `user` int(11) unsigned NOT NULL,
   `agent` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
@@ -453,7 +453,7 @@ database_tables['session_stream'] = """CREATE TABLE IF NOT EXISTS `session_strea
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['share'] = """CREATE TABLE IF NOT EXISTS `share` (
+database_tables['share'] = """CREATE TABLE `share` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user` int(11) unsigned NOT NULL,
   `object_type` varchar(32) CHARACTER SET utf8 DEFAULT NULL,
@@ -472,7 +472,7 @@ database_tables['share'] = """CREATE TABLE IF NOT EXISTS `share` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
 database_tables['site_options'] = """
-CREATE TABLE IF NOT EXISTS `site_options` (
+CREATE TABLE `site_options` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `show_title` text NOT NULL,
   `menu_background_color` text NOT NULL,
@@ -496,7 +496,7 @@ CREATE TABLE IF NOT EXISTS `site_options` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8
 """
 
-database_tables['song'] = """CREATE TABLE IF NOT EXISTS `song` (
+database_tables['song'] = """CREATE TABLE `song` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `file` varchar(512) CHARACTER SET utf8 DEFAULT NULL,
   `catalog` int(11) unsigned NOT NULL DEFAULT '0',
@@ -529,7 +529,7 @@ database_tables['song'] = """CREATE TABLE IF NOT EXISTS `song` (
   FULLTEXT KEY `title` (`title`,`file`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['song_data'] = """CREATE TABLE IF NOT EXISTS `song_data` (
+database_tables['song_data'] = """CREATE TABLE `song_data` (
   `song_id` int(11) unsigned NOT NULL,
   `comment` text COLLATE utf8_unicode_ci,
   `lyrics` text COLLATE utf8_unicode_ci,
@@ -540,7 +540,7 @@ database_tables['song_data'] = """CREATE TABLE IF NOT EXISTS `song_data` (
   UNIQUE KEY `song_id` (`song_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['song_preview'] = """CREATE TABLE IF NOT EXISTS `song_preview` (
+database_tables['song_preview'] = """CREATE TABLE `song_preview` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `session` varchar(256) CHARACTER SET utf8 DEFAULT NULL,
   `artist` int(11) DEFAULT NULL,
@@ -554,7 +554,7 @@ database_tables['song_preview'] = """CREATE TABLE IF NOT EXISTS `song_preview` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['stream_playlist'] = """CREATE TABLE IF NOT EXISTS `stream_playlist` (
+database_tables['stream_playlist'] = """CREATE TABLE `stream_playlist` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `sid` varchar(256) CHARACTER SET utf8 DEFAULT NULL,
   `url` text COLLATE utf8_unicode_ci NOT NULL,
@@ -570,7 +570,7 @@ database_tables['stream_playlist'] = """CREATE TABLE IF NOT EXISTS `stream_playl
   KEY `sid` (`sid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['suggestions'] = """CREATE TABLE IF NOT EXISTS `suggestions` (
+database_tables['suggestions'] = """CREATE TABLE `suggestions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `album` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
@@ -580,14 +580,14 @@ database_tables['suggestions'] = """CREATE TABLE IF NOT EXISTS `suggestions` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['tag'] = """CREATE TABLE IF NOT EXISTS `tag` (
+database_tables['tag'] = """CREATE TABLE `tag` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   UNIQUE KEY `name` (`name`),
   KEY `map_id` (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['tag_map'] = """CREATE TABLE IF NOT EXISTS `tag_map` (
+database_tables['tag_map'] = """CREATE TABLE `tag_map` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `tag_id` int(11) unsigned NOT NULL,
   `object_id` int(11) unsigned NOT NULL,
@@ -600,7 +600,7 @@ database_tables['tag_map'] = """CREATE TABLE IF NOT EXISTS `tag_map` (
   KEY `tag_id` (`tag_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['tmp_browse'] = """CREATE TABLE IF NOT EXISTS `tmp_browse` (
+database_tables['tmp_browse'] = """CREATE TABLE `tmp_browse` (
   `id` int(13) NOT NULL AUTO_INCREMENT,
   `sid` varchar(128) CHARACTER SET utf8 NOT NULL DEFAULT '',
   `data` longtext COLLATE utf8_unicode_ci NOT NULL,
@@ -608,7 +608,7 @@ database_tables['tmp_browse'] = """CREATE TABLE IF NOT EXISTS `tmp_browse` (
   PRIMARY KEY (`sid`,`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['tmp_playlist'] = """CREATE TABLE IF NOT EXISTS `tmp_playlist` (
+database_tables['tmp_playlist'] = """CREATE TABLE `tmp_playlist` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `session` varchar(256) CHARACTER SET utf8 DEFAULT NULL,
   `type` varchar(32) CHARACTER SET utf8 DEFAULT NULL,
@@ -618,7 +618,7 @@ database_tables['tmp_playlist'] = """CREATE TABLE IF NOT EXISTS `tmp_playlist` (
   KEY `type` (`type`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['tmp_playlist_data'] = """CREATE TABLE IF NOT EXISTS `tmp_playlist_data` (
+database_tables['tmp_playlist_data'] = """CREATE TABLE `tmp_playlist_data` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `tmp_playlist` int(11) unsigned NOT NULL,
   `object_type` varchar(32) CHARACTER SET utf8 DEFAULT NULL,
@@ -628,13 +628,13 @@ database_tables['tmp_playlist_data'] = """CREATE TABLE IF NOT EXISTS `tmp_playli
   KEY `tmp_playlist` (`tmp_playlist`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['update_info'] = """CREATE TABLE IF NOT EXISTS `update_info` (
+database_tables['update_info'] = """CREATE TABLE `update_info` (
   `key` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `value` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   UNIQUE KEY `key` (`key`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['user'] = """CREATE TABLE IF NOT EXISTS `user` (
+database_tables['user'] = """CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `fullname` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
@@ -651,7 +651,7 @@ database_tables['user'] = """CREATE TABLE IF NOT EXISTS `user` (
   UNIQUE KEY `username` (`username`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['user_catalog'] = """CREATE TABLE IF NOT EXISTS `user_catalog` (
+database_tables['user_catalog'] = """CREATE TABLE `user_catalog` (
   `user` int(11) unsigned NOT NULL,
   `catalog` int(11) unsigned NOT NULL,
   `level` smallint(4) unsigned NOT NULL DEFAULT '5',
@@ -659,7 +659,7 @@ database_tables['user_catalog'] = """CREATE TABLE IF NOT EXISTS `user_catalog` (
   KEY `catalog` (`catalog`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['user_flag'] = """CREATE TABLE IF NOT EXISTS `user_flag` (
+database_tables['user_flag'] = """CREATE TABLE `user_flag` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user` int(11) NOT NULL,
   `object_id` int(11) unsigned NOT NULL,
@@ -670,7 +670,7 @@ database_tables['user_flag'] = """CREATE TABLE IF NOT EXISTS `user_flag` (
   KEY `object_id` (`object_id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['user_preference'] = """CREATE TABLE IF NOT EXISTS `user_preference` (
+database_tables['user_preference'] = """CREATE TABLE `user_preference` (
   `user` int(11) NOT NULL,
   `preference` int(11) unsigned NOT NULL DEFAULT '0',
   `value` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
@@ -678,7 +678,7 @@ database_tables['user_preference'] = """CREATE TABLE IF NOT EXISTS `user_prefere
   KEY `preference` (`preference`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['user_shout'] = """CREATE TABLE IF NOT EXISTS `user_shout` (
+database_tables['user_shout'] = """CREATE TABLE `user_shout` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user` int(11) NOT NULL,
   `text` text COLLATE utf8_unicode_ci NOT NULL,
@@ -693,7 +693,7 @@ database_tables['user_shout'] = """CREATE TABLE IF NOT EXISTS `user_shout` (
   KEY `user` (`user`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['user_vote'] = """CREATE TABLE IF NOT EXISTS `user_vote` (
+database_tables['user_vote'] = """CREATE TABLE `user_vote` (
   `user` int(11) unsigned NOT NULL,
   `object_id` int(11) unsigned NOT NULL,
   `date` int(11) unsigned NOT NULL,
@@ -702,7 +702,7 @@ database_tables['user_vote'] = """CREATE TABLE IF NOT EXISTS `user_vote` (
   KEY `date` (`date`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['video'] = """CREATE TABLE IF NOT EXISTS `video` (
+database_tables['video'] = """CREATE TABLE `video` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `file` varchar(4096) CHARACTER SET utf8 DEFAULT NULL,
   `catalog` int(11) unsigned NOT NULL,
@@ -725,7 +725,7 @@ database_tables['video'] = """CREATE TABLE IF NOT EXISTS `video` (
   KEY `update_time` (`update_time`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
-database_tables['wanted'] = """CREATE TABLE IF NOT EXISTS `wanted` (
+database_tables['wanted'] = """CREATE TABLE `wanted` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user` int(11) NOT NULL,
   `artist` int(11) DEFAULT NULL,
