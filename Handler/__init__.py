@@ -383,6 +383,7 @@ class Handler(object):
         except:
             pass
         self.cursor = None
+        self.estimated_total_files = 0
         self.db_connect()
         for store in self.gobject['cattreestore']:
             id, new_name, tip, old_name = store[2:]
