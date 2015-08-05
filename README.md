@@ -30,7 +30,7 @@ database) for future use with IDJC and a request web site.
 
 DJDB will scan for removed files, and update the database accordingly (like the Ampache clean feature)
 
-A few things about how DJDB handles tags:
+###A few things about how DJDB handles tags:
  1. It looks for tags that begin/end with spaces, and removes those spaces before adding to the
     database. The tags in the file are not changed. You will see a warning about those so you
     can fix them with your favorite taging tool.
@@ -38,18 +38,17 @@ A few things about how DJDB handles tags:
     a request site.
  3. Warns you about badly formatted date/track/discnumber tags
 
-A few things that DJDB does very different from Ampache
+###A few things that DJDB does very different from Ampache:
  1. Ampache incorrectly calculates track length. A track of 60.9 is calculated as 60
-    instead of 61. gAmp handles this correctly.
+    instead of 61. DJDB handles this correctly.
  2. Ampache seems to calculate the average bit rate of a file, instead of using what
-    is reported in the file tags. gAmp uses the tags from the file.
+    is reported in the file tags. DJDB uses the tags from the file.
  3. DJDB currently can not figure out if a file is CBR, VBR or ABR, so just uses
     VBR in the database for all file. Since IDJC does not use this information,
     it shouldn't be a problem.
 
-Things that need to be done:
+###Things that need to be done:
  1. Allow deleting a catalog.
 
-Before trying out DJDB, please make a backup of your Ampache database, just to be safe.
-I have had no problems with it corrupting my database, but safe is always the best thing!
-
+**Before trying out DJDB, please make a backup of your Ampache database, just to be safe.
+I have had no problems with it corrupting my database, but safe is always the best thing!**
