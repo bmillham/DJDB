@@ -277,8 +277,15 @@ class LibScan(Handler):
         #print "Update info: ", info, fname
         artist_id = self.update_table('artist', info.artist)
         album_id = self.update_table('album', info.album)
-        self.cursor.execute(Queries.update_song, (artist_id, album_id, info.title,
+        try:
+            self.cursor.execute(Queries.update_song, (artist_id, album_id, info.title,
                           info.year, info.sample_rate, info.bitrate, info.size, info.length,
+                          info.tracknumber, info.modification_time, time(), row['sid']))
+        except:
+            print "Error updating song:", info.title
+            print "Possible bad bitrate, setting to 0 and trying again. Bitrate:", info.bitrate
+            self.cursor.execute(Queries.update_song, (artist_id, album_id, info.title,
+                          info.year, info.sample_rate, 0, info.size, info.length,
                           info.tracknumber, info.modification_time, time(), row['sid']))
 
     def update_table(self, table, info):
