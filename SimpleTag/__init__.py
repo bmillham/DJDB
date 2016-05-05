@@ -86,7 +86,7 @@ class SimpleTag(object):
             self._raw_tags[field] = [t]
         if t is None or t == '':
             t = u'UNKNOWN'
-            self.warnings(field, "Empty required string tag")
+            self.warnings = (field, "Empty required string tag")
             self._raw_tags[field] = [t]
         """Strip leading/trailing spaces. Does not actually fix the tags."""
         if self.options['fix_spaces']:
