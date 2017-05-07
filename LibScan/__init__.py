@@ -258,7 +258,8 @@ class LibScan(Handler):
         res.append(self.check_item(db_row, 'track', info.tracknumber))
         res.append(self.check_item(db_row, 'discnumber', info.discnumber))
         res.append(self.check_item(db_row, 'discyear', info.year))
-        res.append(self.check_item(db_row, 'bitrate', info.bitrate))
+        if not self.options['program']['ignore_bitrate']:
+            res.append(self.check_item(db_row, 'bitrate', info.bitrate))
         res.append(self.check_item(db_row, 'rate', info.sample_rate))
         res.append(self.check_item(db_row, 'time', info.length))
         res.append(self.check_item(db_row, 'size', info.size))

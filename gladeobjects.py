@@ -16,6 +16,7 @@ glade_objects = ('main_window', 'lblDirectory', 'lblCatalog', 'lblArtist', 'lblA
                  'albums_removed_label', 'warnings_label', 'create_catalog_box', 'prefix_entry',
                  'valid_filetypes_textview', 'valid_filetypes_textbuffer', 'dash_checkbutton', 'no_tracknumber_checkbutton',
                  'fix_spaces_checkbutton', 'db_error_messagedialog', 'prefix_change_messagedialog',
+                 'ignorebitrate_checkbutton',
                  'preferences_imagemenuitem', 'changedwindow', 'changedstore', 'new_window', 'new_liststore',
                  'deleted_prefixes_label', 'added_prefixes_label', 'prefix_progressbar', 'upgrade_imagemenuitem',
                  'upgrade_dialog')

@@ -1,6 +1,8 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*- 
 
+import gi
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 from os.path import dirname, realpath, join, expanduser
 import cPickle
@@ -19,6 +21,9 @@ try:
     options = cPickle.load(open(configfile, "rb"))
 except:
     options = None
+if 'ignore_bitrate' not in options['program']:
+    print "ignore_bitrate was not in options, setting to default of True"
+    options['program']['ignore_bitrate'] = True
 
 builder = Gtk.Builder()
 try:

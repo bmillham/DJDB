@@ -164,6 +164,7 @@ class Handler(object):
         self.options['program']['tracknumber_warning'] = False
         self.options['program']['dash_warning'] = True
         self.options['program']['fix_spaces'] = True
+        self.options['program']['ignore_bitrate'] = True
         cPickle.dump(self.options, open(self.configfile, "wb"))
         self.gobject['assistant1'].hide()
         try:
@@ -339,6 +340,10 @@ class Handler(object):
         self.gobject['no_tracknumber_checkbutton'].set_active(self.options['program']['tracknumber_warning'])
         self.gobject['fix_spaces_checkbutton'].set_active(self.options['program']['fix_spaces'])
         self.gobject['dash_checkbutton'].set_active(self.options['program']['dash_warning'])
+        try:
+            self.gobject['ignorebitrate_checkbutton'].set_active(self.options['program']['ignore_bitrate'])
+        except:
+            self.gobject['ignorebitrate_checkbutton'].set_active(True)
         self.gobject['valid_filetypes_textbuffer'].set_text(", ".join(self._valid_filetypes))
     
     def on_preferences_dialog_delete_event(self, *args):
@@ -407,6 +412,7 @@ class Handler(object):
         self.options['program']['tracknumber_warning'] = self.gobject['no_tracknumber_checkbutton'].get_active()
         self.options['program']['fix_spaces'] = self.gobject['fix_spaces_checkbutton'].get_active()
         self.options['program']['dash_warning'] = self.gobject['dash_checkbutton'].get_active()
+        self.options['program']['ignore_bitrate'] = self.gobject['ignorebitrate_checkbutton'].get_active()
         self.gobject['main_window'].set_title('DJDB: {}@{}'.format(self.options['db']['database'], self.options['db']['server']))
         cPickle.dump(self.options, open(self.configfile, "wb"))
         self.gobject['preferences_dialog'].hide()
