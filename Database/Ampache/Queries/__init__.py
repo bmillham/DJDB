@@ -22,11 +22,14 @@ select_song_by_filename = """SELECT song.id AS sid, file, catalog, album, song.y
                                     album.name AS album_short,
                                     album.prefix AS album_prefix,
                                     album.disk AS discnumber,
-                                    album.year AS discyear
+                                    album.year AS discyear,
+                                    tag_map.tag_id AS genreid
                              FROM song
                              LEFT JOIN artist ON artist.id = song.artist
                              LEFT JOIN album ON album.id = song.album
+                             LEFT JOIN tag_map ON object_id = song.id AND object_type = "song"
                              WHERE file = %s"""
+select_all_genre = """SELECT id, name FROM tag"""
 select_all_songs = """SELECT song.id AS sid,
                              file,
                              title,
@@ -49,6 +52,7 @@ update_song = """UPDATE song SET artist=%s,
                                  modification_time=%s,
                                  update_time=%s
                              WHERE id = %s"""
+
 # Uses a Template
 select_artist_or_album = """SELECT *,
                                    CONCAT_WS(" ", prefix, name) AS full_name
@@ -71,13 +75,16 @@ insert_song = """INSERT INTO song (album,
                                    track,
                                    modification_time)
                         VALUES (%s)""" % ",".join(['%s']*14)
-
+insert_tag_map = """INSERT INTO tag_map (tag_id, object_id, object_type, user)
+                    VALUES (%s, %s, 'song', 2)"""
+insert_tag = """INSERT INTO tag (name) VALUES(%s)"""
 delete_orphan_albums = "DELETE FROM album WHERE id NOT IN (SELECT album FROM song)"
 delete_orphan_artists = "DELETE FROM artist WHERE id NOT IN (SELECT artist FROM song)"
 delete_missing_file = "DELETE FROM song WHERE id = %s"
 
 get_current_prefixes = "SELECT prefix FROM {} GROUP BY prefix"
 get_prefixes_to_delete = "SELECT id, prefix, name FROM {} WHERE prefix = %s"
+update_tag_map = "UPDATE tag_map SET tag_id = %s WHERE object_id = %s AND object_type = 'song'"
 update_deleted_prefix = "UPDATE {} SET name = %s, prefix = NULL WHERE id = %s"
 get_prefixes_to_add = "SELECT id, name FROM {} WHERE name LIKE %s AND prefix IS NULL"
 update_added_prefix = "UPDATE {} SET name = %s, prefix = %s WHERE id = %s"

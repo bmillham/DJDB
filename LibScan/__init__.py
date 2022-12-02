@@ -8,7 +8,20 @@ from SimpleTag import SimpleTag
 #import mutagen
 #import pymongo
 import os
-import MySQLdb as sql
+
+try:
+    import pymysql
+except ImportError:
+    pymysql = False
+    print("Failed to import pymysql")
+else:
+    pymysql.install_as_MySQLdb()
+
+try:
+    import MySQLdb as sql
+except ImportError:
+    print("Failed to import mysql!")
+    
 from string import Template
 from Database.Ampache import Queries
 #import re
@@ -33,6 +46,8 @@ class LibScan(Handler):
         self._valid_filetypes = valid_filetypes
         super(LibScan, self).__init__(builder, configfile, options, gobject)
         self.estimated_total_files = 0
+        self.genre_by_id = []
+        self.genre_by_name = []
         
 
     """def connect_db(self):
@@ -68,12 +83,21 @@ class LibScan(Handler):
         self.gobject['preferences_imagemenuitem'].set_sensitive(False)
 
         if self.full_scan:
-            print "Ignoring file time to run full scan"
+            print("Ignoring file time to run full scan")
         try:
             self.cursor.execute(Queries.add_modification_time)
         except:
-            print "Field already in database"
-        print "Getting catalogs"
+            print("Field already in database")
+
+        print("Getting genre list")
+        self.genre_by_id = {}
+        self.genre_by_name = {}
+        self.cursor.execute(Queries.select_all_genre)
+        for r in self.cursor.fetchall():
+            self.genre_by_id[r['id']] = r['name'].lower().strip()
+            self.genre_by_name[r['name'].lower().strip()] = r['id']
+
+        print("Getting catalogs")
         self.cursor.execute(Queries.get_catalogs)
         self.catalog_list = []
         for r in self.cursor.fetchall():
@@ -128,6 +152,7 @@ class LibScan(Handler):
                             else:
                                 if self.add_new_track(f+x):
                                     added_to_catalog += 1
+                            
                                 self.update_display()
                                 continue
                             self.modification_time = t = int(os.path.getmtime(f+x))
@@ -139,6 +164,7 @@ class LibScan(Handler):
                                 self.update_display()
                                 continue
                             info = SimpleTag(f+x, self.options['program'])
+                            #print(f"got info from simpletag {info}")
                             if info.warnings:
                                 self.add_warnings(info.warnings)
                             if not info.raw_tags:
@@ -148,7 +174,7 @@ class LibScan(Handler):
                             self.gobject['lblTitle'].set_text(info.title)
                             if info is not None:
                                 if self.cursor.rowcount == 0:
-                                    print "No match in the database for %s" % f+x
+                                    print("No match in the database for %s" % f+x)
                                 else:
                                     if self.check_tags(r, info):
                                         self.mismatch += 1
@@ -157,6 +183,41 @@ class LibScan(Handler):
                                     else:
                                         self.skipped += 1
                                         self.cursor.execute(Queries.update_song_modification_time, (info.modification_time, r['sid']))
+                                    if info.genre is not None:
+                                        if r['genreid'] is None:
+                                            #print(f"No genre '{info.genre}' in database")
+                                            if info.genre.lower() in self.genre_by_name.keys():
+                                                print(f"Adding genre {info.genre} for {r['artist_name']} - {r['title']} - {r['album_name']}")
+                                                self.cursor.execute(Queries.insert_tag_map, (self.genre_by_name[info.genre.lower()], r['sid']))
+                                            else:
+                                                print(f'Genre "{info.genre}" is not in tag table')
+                                                self.cursor.execute(Queries.insert_tag, (info.genre,))
+                                                new_id = self.cursor.lastrowid
+                                                self.cursor.execute(Queries.insert_tag_map, (new_id, r['sid']))
+                                                self.genre_by_id[new_id] = info.genre.lower()
+                                                self.genre_by_name[info.genre.lower()] = new_id
+                                        elif info.genre.lower() != self.genre_by_id[r['genreid']]:
+                                            print(f"Genre mismatch. Tag: '{info.genre}', DB: {r['genreid']} ({self.genre_by_id[r['genreid']]})")
+                                            #print(self.genre_by_name)
+                                            if info.genre.lower() in self.genre_by_name.keys():
+                                                print(f"Update genre to {self.genre_by_name[info.genre.lower()]}")
+                                                #self.cursor.execute(Queries.insert_tag_map, (self.genre_by_name[info.genre.lower()], r['sid']))
+                                                self.cursor.execute(Queries.update_tag_map, (self.genre_by_name[info.genre.lower()], r['sid']))
+                                            else:
+                                                print(f"Adding Genre {info.genre} to tag table")
+                                                self.cursor.execute(Queries.insert_tag, (info.genre,))
+                                                new_id = self.cursor.lastrowid
+                                                #self.cursor.execute(Queries.insert_tag_map, (new_id, r['sid']))
+                                                self.genre_by_id[new_id] = info.genre.lower()
+                                                self.genre_by_name[info.genre.lower()] = new_id
+                                                print(f"Update genre to {info.genre} for {r['artist_name']} - {r['title']} - {r['album_name']})")
+                                                self.cursor.execute(Queries.update_tag_map, (self.genre_by_name[info.genre.lower()], r['sid']))
+                                        else:
+                                            #print("Genre is OK")
+                                            pass
+                                    else:
+                                        #print(f"No genre found for {r['file']}")
+                                        pass
                                 if info.artist.fullname not in artists:
                                     artists.append(info.artist.fullname)
                                     self.gobject['lblArtist'].set_text(", ".join(artists))
@@ -168,20 +229,20 @@ class LibScan(Handler):
                         self.gobject['pgrScan'].set_fraction(self.fraction)
                     yield True
             if added_to_catalog:
-                print "Files were added to the catalog"
+                print("Files were added to the catalog")
                 self.cursor.execute(Queries.update_catalog_addition_time, (int(time()), self.catalog_id))
             if changed_in_catalog or added_to_catalog:
-                print "Files were updated in the catalog"
+                print("Files were updated in the catalog")
                 self.cursor.execute(Queries.update_catalog_update_time, (int(time()), self.catalog_id))
 
         self.scan_running = False
-        print "Scan Completed"
+        print("Scan Completed")
         self.estimated_total_files = self.fcount
         if not estimate:
             self.gobject['pgrScan'].set_fraction(1.0)
             self.update_display()
             yield True
-            print "Checking for removed songs"
+            print("Checking for removed songs")
             self.cursor.execute(Queries.select_all_songs)
             to_check = self.cursor.rowcount
             checked = 0
@@ -194,7 +255,7 @@ class LibScan(Handler):
                 fraction = float(checked) / float(to_check)
                 self.gobject['pgrScan'].set_fraction(fraction)
                 if not os.path.isfile(row['file']):
-                    print "File not found: ", row
+                    #print("File not found: ", row)
                     files_not_found += 1
                     self.gobject['files_not_found_label'].set_text(str(files_not_found))
                     self.add_warnings({'filename': row['file'], 'NOT FOUND': 'File not found',
@@ -224,7 +285,7 @@ class LibScan(Handler):
             self.estimate_completed = True
             self.scan_running = True
             task1 = self.scan_files(estimate=False)
-            GObject.idle_add(task1.next)
+            GObject.idle_add(task1.__next__)
         yield False
 
     def update_display(self):
@@ -263,6 +324,7 @@ class LibScan(Handler):
         res.append(self.check_item(db_row, 'rate', info.sample_rate))
         res.append(self.check_item(db_row, 'time', info.length))
         res.append(self.check_item(db_row, 'size', info.size))
+
         if True in res:
             return True
         else:
@@ -275,7 +337,7 @@ class LibScan(Handler):
         return False
 
     def update_info(self, row, info):
-        #print "Update info: ", info, fname
+        #print("Update info: ", info, fname)
         artist_id = self.update_table('artist', info.artist)
         album_id = self.update_table('album', info.album)
         try:
@@ -283,8 +345,8 @@ class LibScan(Handler):
                           info.year, info.sample_rate, info.bitrate, info.size, info.length,
                           info.tracknumber, info.modification_time, time(), row['sid']))
         except:
-            print "Error updating song:", info.title
-            print "Possible bad bitrate, setting to 0 and trying again. Bitrate:", info.bitrate
+            print("Error updating song:", info.title)
+            print("Possible bad bitrate, setting to 0 and trying again. Bitrate:", info.bitrate)
             self.cursor.execute(Queries.update_song, (artist_id, album_id, info.title,
                           info.year, info.sample_rate, 0, info.size, info.length,
                           info.tracknumber, info.modification_time, time(), row['sid']))
@@ -338,6 +400,20 @@ class LibScan(Handler):
         self.cursor.execute(Queries.insert_artist, fields)
         return self.cursor.lastrowid
 
+    def add_new_tag_map(self, info, track_id):
+        if info.genre is not None:
+            if info.genre.lower() in self.genre_by_name.keys():
+                print(f"Adding genre {info.genre} to {track_id}")
+                self.cursor.execute(Queries.insert_tag_map, (self.genre_by_name[info.genre.lower()], track_id))
+            else:
+                print(f"Adding new Genre {info.genre} to tag table")
+                self.cursor.execute(Queries.insert_tag, (info.genre,))
+                new_id = self.cursor.lastrowid
+                self.genre_by_id[new_id] = info.genre.lower()
+                self.genre_by_name[info.genre.lower()] = new_id
+                print(f"Adding genre {info.genre} for {track_id})")
+                self.cursor.execute(Queries.insert_tag_map, (self.genre_by_name[info.genre.lower()], track_id))
+
     def add_new_track(self, file):
         info = SimpleTag(file, self.options['program'])
         if info.warnings:
@@ -352,6 +428,7 @@ class LibScan(Handler):
         values = [alb_id, art_id, file, self.catalog_id, now, now, info.title, info.year, info.bitrate, info.sample_rate,
              info.size, info.length, info.tracknumber, info.modification_time]
         self.cursor.execute(Queries.insert_song, values)
+        self.add_new_tag_map(info, self.cursor.lastrowid)
         self.new_tracks += 1
         self.gobject['lblArtist'].set_text(info.artist.fullname)
         self.gobject['lblAlbum'].set_text(info.album.fullname)
@@ -364,7 +441,7 @@ class LibScan(Handler):
         fp, fn = os.path.split(warnings['filename'])
         wsa = self.gobject['warningsstore'].append
         parent = wsa(None, (0, fn, 'path', fp))
-        for tag, warning in warnings.iteritems():
+        for tag, warning in warnings.items():
             if tag == 'filename':
                 continue
             if type(warning) is list:
@@ -382,7 +459,7 @@ class LibScan(Handler):
             self._changed_iters[id] = csa(None, (id, file, tag, str(filetag), str(dbtag)))
 
     def get_current_prefixes(self):
-        print "Looking for current prefixes"
+        print("Looking for current prefixes")
         prefixes = set()
         for table in ('album', 'artist'):
             self.cursor.execute(Queries.get_current_prefixes.format(table))
@@ -419,7 +496,7 @@ class LibScan(Handler):
                         try:
                             prefix, name = row['name'].split(" ", 1)
                         except:
-                            print "Not changing to a prefix, only one value: ", row['name']
+                            print("Not changing to a prefix, only one value: ", row['name'])
                         else:
                             self.cursor.execute(Queries.update_added_prefix.format(table), (name, prefix, row['id']))
                         self.gobject['prefix_progressbar'].set_fraction(count / total)

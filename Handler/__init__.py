@@ -1,7 +1,15 @@
 from gi.repository import Gtk, GObject
 import os
-import cPickle
+import pickle
 from time import sleep, time
+try:
+    import pymysql
+except ImportError:
+    pymysql = False
+    print("Failed to import pymysql")
+else:
+    pymysql.install_as_MySQLdb()
+
 import MySQLdb as sql
 from Database.Ampache import Queries
 
@@ -10,7 +18,7 @@ ADD_DIR_STRING = 'Add New Directory'
 import_database_fields = ('import_database_server_entry', 'import_database_name_entry', 'import_database_user_entry', 'import_database_password_entry')
 
 class Handler(object):
-    from guiobjects import _on_pulse_timeout, _build_catalog_tree
+    from .guiobjects import _on_pulse_timeout, _build_catalog_tree
 
     def __init__(self, builder, configfile, options, gobject):
         self.builder = builder
@@ -32,7 +40,7 @@ class Handler(object):
             self.db = sql.connect(db=self.options['db']['database'], user=self.options['db']['user'],
                                   passwd=self.options['db']['password'], host=self.options['db']['server'], charset='utf8')
         except:
-            print "Failed to connect to the database"
+            print("Failed to connect to the database")
             self.db = None
         else:
             self.db.autocommit(True)
@@ -40,7 +48,7 @@ class Handler(object):
             self.cursor.execute("set time_zone = '-00:00'")
 
     def on_firstrun_assistant_cancel(self, *args):
-        print "Aborting assistant"
+        print("Aborting assistant")
         Gtk.main_quit(*args)
 
     def on_assistant1_cancel(self, *args):
@@ -55,7 +63,7 @@ class Handler(object):
         self.gobject['firstrun_assistant'].set_page_complete(self.gobject['firstrun_assistant_database_box'], True)
 
     def import_db_page_box_show_cb(self, *args):
-        print "Showing db box"
+        print("Showing db box")
 
     def switch1_notify_cb(self, switch, *args):
         self._enable_import_box(switch.get_active())
@@ -117,7 +125,7 @@ class Handler(object):
                 self.create_new_database = False
 
     def on_firstrun_assistant_apply(self, *args):
-        print self.configfile
+        print(self.configfile)
         if self.options is None:
             self.options = {}
             self.options['db'] = {}
@@ -125,13 +133,13 @@ class Handler(object):
             for f in self.gobject['FIELD_NAMES']:
                 self.options['db'][f] = self.gobject['assistant_db_entry'][f].get_text()
                 self.options['import_db'][f] = self.gobject['import_db_entry'][f].get_text()
-        cPickle.dump(self.options, open(self.configfile, "wb"))
+        pickle.dump(self.options, open(self.configfile, "wb"))
         self.gobject['setupdialog'].show_all()
         self.gobject['setup_dialog_spinner'].start()
         GObject.timeout_add_seconds(5, self.firstrun_finished)
 
     def on_assistant1_apply(self, *args):
-        print "Applying"
+        print("Applying")
         self.options = {}
         self.options['db'] = {}
         self.options['db']['database'] = self.database
@@ -139,21 +147,21 @@ class Handler(object):
         self.options['db']['user'] = self.database_user
         self.options['db']['password'] = self.database_password
         if self.create_new_database:
-            print "Connecting to the server"
+            print("Connecting to the server")
             # Special case connection to the server. Connect without a database
             # so the new database can be created
             try:
                 self.db = sql.connect(user=self.database_user, passwd=self.database_password, host=self.database_server, charset='utf8')
             except:
-                print "Failed to connect to the database server"
-                print self.database_user, self.database_password, self.database_server
+                print("Failed to connect to the database server")
+                print(self.database_user, self.database_password, self.database_server)
             else:
                 self.create_database()
                 self._prefixes = self.default_prefixes
         else:
             self.db_connect()
             if not self.db:
-                print "failed to connect to the database"
+                print("failed to connect to the database")
                 self.gobject['db_error_messagedialog'].show()
                 return
             self.get_current_prefixes()
@@ -165,7 +173,7 @@ class Handler(object):
         self.options['program']['dash_warning'] = True
         self.options['program']['fix_spaces'] = True
         self.options['program']['ignore_bitrate'] = True
-        cPickle.dump(self.options, open(self.configfile, "wb"))
+        pickle.dump(self.options, open(self.configfile, "wb"))
         self.gobject['assistant1'].hide()
         try:
             if self._creating_new_database:
@@ -177,48 +185,48 @@ class Handler(object):
         from LibScan.mysql_ampache import database_tables, database_constraints, database_creator, catalog_creator, catalog_local_creator
         self.db.autocommit(True)
         cursor = self.db.cursor()
-        print "Creating the database"
+        print("Creating the database")
         cursor.execute(database_creator % self.database)
         cursor.execute("USE `{}`".format(self.database))
-        print "Creating the tables"
+        print("Creating the tables")
         for table, creator in database_tables.iteritems():
-            print "Creating table {}".format(table)
+            print("Creating table {}".format(table))
             cursor.execute(creator)
-        print "Tables created"
-        print "Creating constraints"
+        print("Tables created")
+        print("Creating constraints")
         for table, creator in database_constraints.iteritems():
-            print "Creating constraint {}".format(table)
+            print("Creating constraint {}".format(table))
             cursor.execute(creator)
-        print "Constraints created"
-        print "Creating catalog entry"
+        print("Constraints created")
+        print("Creating catalog entry")
         now = int(time())
         cursor.execute(catalog_creator, (self.catalog_name, now, now, now))
         new_cat_id = cursor.lastrowid
-        print "Created catalog entry, creating local entry"
+        print("Created catalog entry, creating local entry")
         cursor.execute(catalog_local_creator, (self.catalog_dir, new_cat_id))
-        print "Created local entry"
-        print "Reconnecting to the new database"
+        print("Created local entry")
+        print("Reconnecting to the new database")
         self.db_connect()
 
 
     def firstrun_finished(self):
-        print "Firstrun done"
+        print("Firstrun done")
         self.gobject['setupdialog'].hide()
         self.gobject['firstrun_assistant'].hide()
         self.gobject['main_window'].show_all()
         return False
 
     def catEdited(self, *args):
-        print "Cat edited: ", args
+        print("Cat edited: ", args)
 
     def dirEdited(self, *args):
-        print "Dir Edited: ", args
+        print("Dir Edited: ", args)
 
     def dirClicked(self, *args):
-        print "Dir column clicked: ", args
+        print("Dir column clicked: ", args)
 
     def getSelectedFolder(self, *args):
-        print "Selected: ", self.gobject['filechooserdialog1'].get_filename()
+        print("Selected: ", self.gobject['filechooserdialog1'].get_filename())
         self.catTree.set_value(self.current_iter, 1, self.gobject['filechooserdialog1'].get_filename())
         self.gobject['filechooserdialog1'].hide()
 
@@ -244,39 +252,39 @@ class Handler(object):
         self.gobject['filechooserdialog1'].show_all()
 
     def on_button_full_scan_library_clicked(self, *args):
-        print "Running full scan"
+        print("Running full scan")
         self.full_scan = True
         self.on_button_scan_library_clicked(*args)
 
     def on_button_scan_library_clicked(self, *args):
         if not self.db:
             self.gobject['database_message_dialog'].show()
-            print "Database not connected"
+            print("Database not connected")
             return
 
         if self.scan_running:
-            print "Stop Scan"
+            print("Stop Scan")
             self.scan_running = False
         else:
             if self.estimated_total_files > 0:
-                print "Estimate already run, scanning files now"
+                print("Estimate already run, scanning files now")
                 self.scan_running = True
                 task = self.scan_files(estimate=False)
-                GObject.idle_add(task.next)
+                GObject.idle_add(task.__next__)
                 return True
             self.scan_running = True
             self.estimate_completed = False
             self._pulse_timeout_id = GObject.timeout_add(600, self._on_pulse_timeout, None)
             task = self.scan_files(estimate=True)
-            GObject.idle_add(task.next)
+            GObject.idle_add(task.__next__)
             self.gobject['pgrScan'].set_text('Estimating Files')
-            print "Estimate Started"
+            print("Estimate Started")
 
     def on_button_exit_clicked(self, *args):
         Gtk.main_quit(*args)
 
     def on_main_window_destroy(self, *args):
-        print "Window Destroyed"
+        print("Window Destroyed")
         self.on_button_exit_clicked(args)
 
     def on_menu_file_quit_activate(self, *args):
@@ -284,7 +292,7 @@ class Handler(object):
 
     def on_button_preferences_close(self, *args):
         """ Reset preferences """
-        print "Close Prefs"
+        print("Close Prefs")
         self.gobject['preferences_dialog'].hide()
         self.gobject['database_server_entry'].set_text(self.options['db']['server']) 
         self.gobject['database_name_entry'].set_text(self.options['db']['database']) 
@@ -305,24 +313,24 @@ class Handler(object):
         from LibScan.mysql_ampache import database_tables, database_constraints, database_creator, catalog_creator, catalog_local_creator
         self.db.autocommit(True)
         cursor = self.db.cursor()
-        print "Updating the database"
+        print("Updating the database")
         #cursor.execute("USE `{}`".format(self.database))
-        print "Creating the tables"
+        print("Creating the tables")
         for table, creator in database_tables.iteritems():
-            print "Creating table {}".format(table)
+            print("Creating table {}".format(table))
             try:
                 cursor.execute(creator)
             except:
-                print "Table {} already in database".format(table)
-        print "Tables created"
-        print "Creating constraints"
+                print("Table {} already in database".format(table))
+        print("Tables created")
+        print("Creating constraints")
         for table, creator in database_constraints.iteritems():
-            print "Creating constraint {}".format(table)
+            print("Creating constraint {}".format(table))
             try:
                 cursor.execute(creator)
             except:
-                print "Constraint {} already in database".format(table)
-        print "Constraints created"
+                print("Constraint {} already in database".format(table))
+        print("Constraints created")
         self.db_connect()
         self.gobject['upgrade_dialog'].hide()
 
@@ -355,11 +363,11 @@ class Handler(object):
 
     def on_new_catalog_dialog_ok_button_clicked(self, *args):
         from LibScan.mysql_ampache import catalog_creator, catalog_local_creator
-        print "OK Clicked"
+        print("OK Clicked")
         name = self.gobject['new_catalog_name_entry'].get_text()
         dir = self.gobject['new_catalog_filechooser_button'].get_filename()
         if name == '' or dir is None:
-            print "Blank dir or name"
+            print("Blank dir or name")
             self.gobject['new_catalog_dialog'].hide()
             return
         exists = False
@@ -369,16 +377,16 @@ class Handler(object):
         for store in self.gobject['cattreestore']:
             dirname, id, new_name = store[1:4]
             if dir == dirname or name == new_name:
-                print "Not creating catalog, already exists"
+                print("Not creating catalog, already exists")
                 exists = True
         if not exists:
-            print "Creating catalog entry"
+            print("Creating catalog entry")
             now = int(time())
             self.cursor.execute(catalog_creator, (name, now, now, now))
             new_cat_id = self.cursor.lastrowid
-            print "Created catalog entry, creating local entry"
+            print("Created catalog entry, creating local entry")
             self.cursor.execute(catalog_local_creator, (dir, new_cat_id))
-            print "Created local entry"
+            print("Created local entry")
             self._build_catalog_tree()
         self.gobject['new_catalog_dialog'].hide()
 
@@ -414,7 +422,7 @@ class Handler(object):
         self.options['program']['dash_warning'] = self.gobject['dash_checkbutton'].get_active()
         self.options['program']['ignore_bitrate'] = self.gobject['ignorebitrate_checkbutton'].get_active()
         self.gobject['main_window'].set_title('DJDB: {}@{}'.format(self.options['db']['database'], self.options['db']['server']))
-        cPickle.dump(self.options, open(self.configfile, "wb"))
+        pickle.dump(self.options, open(self.configfile, "wb"))
         self.gobject['preferences_dialog'].hide()
         try:
             self.db.close()
@@ -440,7 +448,7 @@ class Handler(object):
         return True
 
     def on_database_message_dialog_response(self, *args):
-        print "Response: ", args
+        print("Response: ", args)
         self.gobject['database_message_dialog'].hide()
 
     def on_database_message_dialog_delete_event(self, *args):
@@ -463,7 +471,7 @@ class Handler(object):
     def on_prefix_change_messagedialog_response(self, *args):
         if args[1] == -8:
             task = self.update_prefixes()
-            GObject.idle_add(task.next)
+            GObject.idle_add(task.__next__)
         else:
             self.gobject['prefix_change_messagedialog'].hide()
     def on_prefix_change_messagedialog_delete_event(self, *args):

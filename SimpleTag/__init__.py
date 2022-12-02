@@ -1,7 +1,7 @@
 from .map import tag_to_db_map
 from .fix_track_disc import fix_track_disc
 from .parse_year import parse_year
-from Name import Name
+from .Name import Name
 from mutagen import File
 import os
 
@@ -14,7 +14,7 @@ default_options = {
 
 class SimpleTag(object):
     def __init__(self, filename=None, options=None):
-        #print "Simpletag initialized with: ", filename
+        #print(f"Simpletag initialized with: {filename}")
         self._filename = filename
         self.options = options
         if self.options is None:
@@ -28,6 +28,7 @@ class SimpleTag(object):
         self._album = None
         self._title = None
         self._year = None
+        self._genre = None
         try:
             self._raw_tags = File(filename, easy=True)
         except:
@@ -71,6 +72,10 @@ class SimpleTag(object):
             self._length = 0
         else:
             self._length = int(round(float(self._length)))
+        try:
+            self._genre = self._raw_tags['genre']
+        except:
+            self._genre = None
         self._size = os.path.getsize(self._filename)
         self._modification_time = int(os.path.getmtime(self._filename))
 
@@ -171,3 +176,13 @@ class SimpleTag(object):
     @property
     def modification_time(self):
         return self._modification_time
+
+    @property
+    def genre(self):
+        try:
+            return self._genre[0].strip()
+        except TypeError:
+            return None
+        except IndexError:
+            print('Index error in', self._genre)
+            return None

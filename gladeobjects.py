@@ -28,7 +28,7 @@ def get_glade_objects(builder):
     for o in glade_objects:
         gobject[o] = builder.get_object(o)
         if gobject[o] is None:
-            print "WARNING: object {} not found".format(o)
+            print("WARNING: object {} not found".format(o))
 
     for o in assistant_object_names:
         gobject[o] = {}

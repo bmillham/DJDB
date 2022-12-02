@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.10"/>
   <object class="GtkAboutDialog" id="about_dialog">
@@ -15,6 +15,9 @@
     <property name="authors">Brian Millham &lt;bmillham@gmail.com&gt;</property>
     <property name="logo_icon_name"/>
     <property name="license_type">gpl-2-0</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="aboutdialog-vbox1">
         <property name="can_focus">False</property>
@@ -88,6 +91,9 @@
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Changed Tags</property>
     <signal name="delete-event" handler="on_changedwindow_delete_event" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkScrolledWindow" id="scrolledwindow2">
         <property name="visible">True</property>
@@ -167,6 +173,9 @@
     <property name="secondary_text" translatable="yes">Check the database name, server name, login and password.</property>
     <signal name="delete-event" handler="on_database_message_dialog_delete_event" swapped="no"/>
     <signal name="response" handler="on_database_message_dialog_response" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="messagedialog-vbox3">
         <property name="can_focus">False</property>
@@ -201,6 +210,9 @@
     <property name="secondary_text" translatable="yes">Unable to connect to the database. Please check the database settings and try again.</property>
     <signal name="delete-event" handler="on_db_error_messagedialog_delete_event" swapped="no"/>
     <signal name="response" handler="on_db_error_messagedialog_response" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="messagedialog-vbox6">
         <property name="can_focus">False</property>
@@ -230,6 +242,9 @@
   <object class="GtkDialog" id="dialog1">
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox2">
         <property name="can_focus">False</property>
@@ -267,6 +282,9 @@
     <property name="create_folders">False</property>
     <signal name="close" handler="getSelectedFolder" swapped="no"/>
     <signal name="delete-event" handler="closeFileChooser" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="filechooserdialog-vbox1">
         <property name="can_focus">False</property>
@@ -379,6 +397,9 @@
     <property name="title" translatable="yes">DJDB</property>
     <property name="window_position">center</property>
     <signal name="destroy" handler="on_main_window_destroy" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkBox" id="main_window_box">
         <property name="visible">True</property>
@@ -1177,6 +1198,9 @@
     <signal name="apply" handler="on_assistant1_apply" swapped="no"/>
     <signal name="cancel" handler="on_assistant1_cancel" swapped="no"/>
     <signal name="prepare" handler="on_assistant1_prepare" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkLabel" id="label48">
         <property name="visible">True</property>
@@ -1733,15 +1757,8 @@ in the following pages.
         <property name="has_padding">False</property>
       </packing>
     </child>
-    <child internal-child="action_area">
-      <object class="GtkBox" id="assistant-action_area2">
-        <property name="can_focus">False</property>
-        <property name="halign">end</property>
-        <property name="spacing">6</property>
-      </object>
-      <packing>
-        <property name="has_padding">False</property>
-      </packing>
+    <child type="titlebar">
+      <placeholder/>
     </child>
   </object>
   <object class="GtkAssistant" id="firstrun_assistant">
@@ -1754,6 +1771,9 @@ in the following pages.
     <signal name="apply" handler="on_firstrun_assistant_apply" swapped="no"/>
     <signal name="cancel" handler="on_firstrun_assistant_cancel" swapped="no"/>
     <signal name="prepare" handler="on_firstrun_assistant_prepare" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkLabel" id="label12">
         <property name="visible">True</property>
@@ -2215,8 +2235,9 @@ in the following pages.
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="xpad">5</property>
                         <property name="label" translatable="yes">Server:</property>
+                        <property name="justify">right</property>
+                        <property name="width_chars">7</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -2228,8 +2249,8 @@ in the following pages.
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="xpad">5</property>
                         <property name="label" translatable="yes">Database:</property>
+                        <property name="width_chars">9</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -2241,8 +2262,8 @@ in the following pages.
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="xpad">5</property>
                         <property name="label" translatable="yes">User:</property>
+                        <property name="width_chars">5</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -2254,8 +2275,8 @@ in the following pages.
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="xpad">5</property>
                         <property name="label" translatable="yes">Password:</property>
+                        <property name="width_chars">8</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -2348,8 +2369,8 @@ in the following pages.
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="xpad">5</property>
                         <property name="label" translatable="yes">Server:</property>
+                        <property name="width_chars">6</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -2361,8 +2382,8 @@ in the following pages.
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="xpad">5</property>
                         <property name="label" translatable="yes">Database:</property>
+                        <property name="width_chars">8</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -2374,8 +2395,8 @@ in the following pages.
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="xpad">5</property>
                         <property name="label" translatable="yes">User:</property>
+                        <property name="width_chars">5</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -2387,8 +2408,8 @@ in the following pages.
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="xpad">5</property>
                         <property name="label" translatable="yes">Password:</property>
+                        <property name="width_chars">9</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -2461,15 +2482,8 @@ in the following pages.
         <property name="has_padding">False</property>
       </packing>
     </child>
-    <child internal-child="action_area">
-      <object class="GtkBox" id="assistant-action_area1">
-        <property name="can_focus">False</property>
-        <property name="halign">end</property>
-        <property name="spacing">6</property>
-      </object>
-      <packing>
-        <property name="has_padding">False</property>
-      </packing>
+    <child type="titlebar">
+      <placeholder/>
     </child>
   </object>
   <object class="GtkDialog" id="new_catalog_dialog">
@@ -2479,6 +2493,9 @@ in the following pages.
     <property name="type_hint">dialog</property>
     <property name="gravity">center</property>
     <signal name="delete-event" handler="on_new_catalog_dialog_delete_event" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox4">
         <property name="can_focus">False</property>
@@ -2631,6 +2648,9 @@ in the following pages.
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">New Tracks</property>
     <signal name="delete-event" handler="on_new_window_delete_event" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkScrolledWindow" id="scrolledwindow3">
         <property name="visible">True</property>
@@ -2718,6 +2738,9 @@ in the following pages.
     <property name="secondary_text" translatable="yes">You have changed the prefixes used for Artist and Album names. Only new tracks scanned in will use the new prefix settings. To update current tracks, select Yes and the database will be updated with the new prefixes. This should only take a few seconds. If you select No, existing tracks will continue to have their current prefixes, and you will have to use File : Force Full Scan to update them at a later time.</property>
     <signal name="delete-event" handler="on_prefix_change_messagedialog_delete_event" swapped="no"/>
     <signal name="response" handler="on_prefix_change_messagedialog_response" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="messagedialog-vbox7">
         <property name="can_focus">False</property>
@@ -2839,6 +2862,9 @@ in the following pages.
     <property name="buttons">ok</property>
     <property name="text" translatable="yes">Creating Database</property>
     <property name="secondary_text" translatable="yes">Creating the Database</property>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="messagedialog-vbox">
         <property name="can_focus">False</property>
@@ -2922,6 +2948,9 @@ in the following pages.
     <signal name="close" handler="on_button_preferences_close" swapped="no"/>
     <signal name="delete-event" handler="on_preferences_dialog_delete_event" swapped="no"/>
     <signal name="show" handler="on_preferences_dialog_show" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="can_focus">False</property>
@@ -3572,6 +3601,9 @@ Prefixes are not case sensitive.</property>
     <property name="title" translatable="yes">Upgrade Database</property>
     <property name="type_hint">dialog</property>
     <signal name="delete-event" handler="on_upgrade_dialog_no_button_clicked" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox6">
         <property name="can_focus">False</property>
@@ -3706,6 +3738,9 @@ This is probably OK, since updating Ampache usually breaks IDJC because of chang
     <property name="can_focus">False</property>
     <property name="title" translatable="yes">Warnings</property>
     <signal name="delete-event" handler="on_warningwindow_delete_event" swapped="no"/>
+    <child type="titlebar">
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkScrolledWindow" id="scrolledwindow1">
         <property name="visible">True</property>
