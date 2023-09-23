@@ -35,9 +35,14 @@ valid_filetypes = ["aac", "adif", "adts", "mid", '669', 'amf', 'ams', 'dsm', 'fa
 
 modes = ('abr', 'vbr', 'cbr')
 
+class MyGObject(dict):
+    def __init__(self):
+        pass
+    
 
 class LibScan(Handler):
     def __init__(self, builder, configfile, options, gobject):
+        print('Initilize libscan')
         self.default_prefixes =  ('the', 'a', 'an', 'die', 'ein', 'le', 'les', 'la')
         self.cursor = None
         self.db = None
@@ -48,28 +53,7 @@ class LibScan(Handler):
         self.estimated_total_files = 0
         self.genre_by_id = []
         self.genre_by_name = []
-        
 
-    """def connect_db(self):
-        self.client = pymongo.MongoClient()
-        self.db = self.client.IDJClib
-        self.songs = self.db.songs
-        self.songs.ensure_index('file', unique=True)
-        self.songs.ensure_index('artist')
-        self.songs.ensure_index('album')
-        self.songs.ensure_index([('title', pymongo.TEXT), ('album_name', pymongo.TEXT), ('artist_name', pymongo.TEXT)], language_override='english')
-        self.file_exceptions = self.db.file_exceptions
-        self.file_exceptions.ensure_index('file', unique=True)
-        #self.catalogs = self.db.catalogs
-        #self.catalogs = self.catalog_list
-        self.artists = self.db.artists
-        self.artists.ensure_index('search')
-        self.artists.ensure_index([('name', pymongo.ASCENDING), ('prefix', pymongo.ASCENDING) ], unique=True)
-        self.artists.ensure_index([('name', pymongo.TEXT)], language_override='english')
-        self.albums = self.db.albums
-        self.albums.ensure_index([('name', pymongo.ASCENDING), ('prefix', pymongo.ASCENDING), ('disk', pymongo.ASCENDING), ('year', pymongo.ASCENDING)], unique=True)
-        self.albums.ensure_index([('name', pymongo.TEXT)], language_override='english')
-        self.catalogs.drop()"""
 
     def scan_files(self, estimate=False):
         self.fcount = 0
@@ -77,10 +61,11 @@ class LibScan(Handler):
         self.files_bad = 0
         self.files_no_tags = 0
         self.new_tracks = 0
-        self.gobject['warningsstore'].clear()
-        self.gobject['changedstore'].clear()
-        self.gobject['button_scan_library'].set_label("Abort Scan")
-        self.gobject['preferences_imagemenuitem'].set_sensitive(False)
+        if not self.options['no_gui']:
+            self.gobject['warningsstore'].clear()
+            self.gobject['changedstore'].clear()
+            self.gobject['button_scan_library'].set_label("Abort Scan")
+            self.gobject['preferences_imagemenuitem'].set_sensitive(False)
 
         if self.full_scan:
             print("Ignoring file time to run full scan")
@@ -102,7 +87,7 @@ class LibScan(Handler):
         self.catalog_list = []
         for r in self.cursor.fetchall():
             self.catalog_list.append({'id': r['cid'], 'name': r['name'], 'paths': [r['path']]})
-        if not estimate:
+        if not estimate and not self.options['no_gui']:
             self.gobject['pgrScan'].set_text(None)
             
         self.start_time = time()
@@ -289,9 +274,9 @@ class LibScan(Handler):
         else:
             self.estimate_completed = True
             self.scan_running = True
-            task1 = self.scan_files(estimate=False)
+            #task1 = self.scan_files(estimate=False)
             GObject.idle_add(task1.__next__)
-        yield False
+        yield False"""
 
     def update_display(self):
         t = time()

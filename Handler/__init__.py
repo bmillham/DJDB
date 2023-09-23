@@ -24,7 +24,8 @@ class Handler(object):
         self.builder = builder
         self.configfile = configfile
         self.options = options
-        get_object = builder.get_object
+        if not self.options['no_gui']:
+            get_object = builder.get_object
         self.scan_running = False
         self.gobject = gobject
         self._build_catalog_tree()

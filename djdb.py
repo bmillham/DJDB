@@ -1,17 +1,23 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*- 
 
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+import argparse
+
+parser = argparse.ArgumentParser(description="Create/update an Ampache database for IDJC")
+parser.add_argument('-n', '--no-gui',
+                    action='store_true',
+                    help='Just run the scan with no gui')
+args = parser.parse_args()
+
+if not args.no_gui:
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk
+    from gladeobjects import get_glade_objects, field_names
+    from LibScan import LibScan
+
 from os.path import dirname, realpath, join, expanduser
 import pickle
-from gladeobjects import get_glade_objects, field_names
-from LibScan import LibScan
-# Hack to fix unicode issues in Python 2.7
-#import sys
-#reload(sys)
-#sys.setdefaultencoding("UTF8")
 
 home = expanduser("~")
 configfile = join(home, ".djdb.p")
@@ -28,6 +34,13 @@ try:
 except:
     # No file
     pass
+
+options['no_gui'] = args.no_gui
+if args.no_gui:
+    from NoGui import NoGui
+    ng = NoGui(configfile, options)
+    exit(0)
+
 print('starting builder')
 builder = Gtk.Builder()
 try:
