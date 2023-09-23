@@ -121,7 +121,6 @@ class LibScan(Handler):
                 for folder, subs, files in os.walk(str(d)):
                     if not estimate:
                         self.cursor.execute("START TRANSACTION")
-                        print("Starting transaction")
                     if not self.scan_running:
                         self.gobject['lblCatalog'].set_text('Scan Aborted')
                         self.gobject['button_scan_library'].set_label("Scan Library")
@@ -192,10 +191,10 @@ class LibScan(Handler):
                                         if r['genreid'] is None:
                                             #print(f"No genre '{info.genre}' in database")
                                             if info.genre.lower() in self.genre_by_name.keys():
-                                                print(f"Adding genre {info.genre} for {r['artist_name']} - {r['title']} - {r['album_name']}")
+                                                #print(f"Adding genre {info.genre} for {r['artist_name']} - {r['title']} - {r['album_name']}")
                                                 self.cursor.execute(Queries.insert_tag_map, (self.genre_by_name[info.genre.lower()], r['sid']))
                                             else:
-                                                print(f'Genre "{info.genre}" is not in tag table')
+                                                #print(f'Genre "{info.genre}" is not in tag table')
                                                 self.cursor.execute(Queries.insert_tag, (info.genre,))
                                                 new_id = self.cursor.lastrowid
                                                 self.cursor.execute(Queries.insert_tag_map, (new_id, r['sid']))
@@ -209,13 +208,13 @@ class LibScan(Handler):
                                                 #self.cursor.execute(Queries.insert_tag_map, (self.genre_by_name[info.genre.lower()], r['sid']))
                                                 self.cursor.execute(Queries.update_tag_map, (self.genre_by_name[info.genre.lower()], r['sid']))
                                             else:
-                                                print(f"Adding Genre {info.genre} to tag table")
+                                                #print(f"Adding Genre {info.genre} to tag table")
                                                 self.cursor.execute(Queries.insert_tag, (info.genre,))
                                                 new_id = self.cursor.lastrowid
                                                 #self.cursor.execute(Queries.insert_tag_map, (new_id, r['sid']))
                                                 self.genre_by_id[new_id] = info.genre.lower()
                                                 self.genre_by_name[info.genre.lower()] = new_id
-                                                print(f"Update genre to {info.genre} for {r['artist_name']} - {r['title']} - {r['album_name']})")
+                                                #print(f"Update genre to {info.genre} for {r['artist_name']} - {r['title']} - {r['album_name']})")
                                                 self.cursor.execute(Queries.update_tag_map, (self.genre_by_name[info.genre.lower()], r['sid']))
                                         else:
                                             #print("Genre is OK")
@@ -231,7 +230,6 @@ class LibScan(Handler):
                             else:
                                 self.files_no_tags += 1
                             self.update_display()
-                        print("Commiting transaction")
                         self.cursor.execute("COMMIT")
                         self.gobject['pgrScan'].set_fraction(self.fraction)
                     yield True
@@ -410,19 +408,24 @@ class LibScan(Handler):
     def add_new_tag_map(self, info, track_id):
         if info.genre is not None:
             if info.genre.lower() in self.genre_by_name.keys():
-                print(f"Adding genre {info.genre} to {track_id}")
+                #print(f"Adding genre {info.genre} to {track_id}")
                 self.cursor.execute(Queries.insert_tag_map, (self.genre_by_name[info.genre.lower()], track_id))
             else:
-                print(f"Adding new Genre {info.genre} to tag table")
+                #print(f"Adding new Genre {info.genre} to tag table")
                 self.cursor.execute(Queries.insert_tag, (info.genre,))
                 new_id = self.cursor.lastrowid
                 self.genre_by_id[new_id] = info.genre.lower()
                 self.genre_by_name[info.genre.lower()] = new_id
-                print(f"Adding genre {info.genre} for {track_id}")
+                #print(f"Adding genre {info.genre} for {track_id}")
                 self.cursor.execute(Queries.insert_tag_map, (self.genre_by_name[info.genre.lower()], track_id))
 
     def add_new_track(self, file):
-        info = SimpleTag(file, self.options['program'])
+        try:
+            info = SimpleTag(file, self.options['program'])
+        except:
+            print(f'Bad tags in {file}')
+            self.files_bad += 1
+            return False
         if info.warnings:
             self.add_warnings(info.warnings)
             
@@ -434,7 +437,12 @@ class LibScan(Handler):
         now = int(time())
         values = [alb_id, art_id, file, self.catalog_id, now, now, info.title, info.year, info.bitrate, info.sample_rate,
              info.size, info.length, info.tracknumber, info.modification_time]
-        self.cursor.execute(Queries.insert_song, values)
+        try:
+            self.cursor.execute(Queries.insert_song, values)
+        except pymysql.err.DataError:
+            print(f'Bad year found in {file}: {info.year}')
+            values[7] = 0 # Zero the year if invalid
+            self.cursor.execute(Queries.insert_song, values)
         self.add_new_tag_map(info, self.cursor.lastrowid)
         self.new_tracks += 1
         self.gobject['lblArtist'].set_text(info.artist.fullname)
