@@ -110,7 +110,8 @@ class LibScan(Handler):
         self.skipped = 0
         self.warnings_count = 0
         self._changed_iters = {}
-        
+
+        self.cursor.execute("SET autocommit = 0")
         for c in self.catalog_list:
             added_to_catalog = 0
             changed_in_catalog = 0
@@ -118,12 +119,16 @@ class LibScan(Handler):
             for d in c['paths']:
                 self.gobject['lblCatalog'].set_text('%s (%s)' % (c['name'], d))
                 for folder, subs, files in os.walk(str(d)):
+                    if not estimate:
+                        self.cursor.execute("START TRANSACTION")
+                        print("Starting transaction")
                     if not self.scan_running:
                         self.gobject['lblCatalog'].set_text('Scan Aborted')
                         self.gobject['button_scan_library'].set_label("Scan Library")
                         self.gobject['preferences_imagemenuitem'].set_sensitive(True)
                         self.estimate_completed = True
                         self.full_scan = False
+                        self.cursor.execute("COMMIT")
                         yield False
                     self.gobject['lblDirectory'].set_text(folder.replace(str(d) + os.path.sep, ""))
                     # Directories begining with .Trash (or .trash etc.) and 0000 are ignored
@@ -226,6 +231,8 @@ class LibScan(Handler):
                             else:
                                 self.files_no_tags += 1
                             self.update_display()
+                        print("Commiting transaction")
+                        self.cursor.execute("COMMIT")
                         self.gobject['pgrScan'].set_fraction(self.fraction)
                     yield True
             if added_to_catalog:
@@ -411,7 +418,7 @@ class LibScan(Handler):
                 new_id = self.cursor.lastrowid
                 self.genre_by_id[new_id] = info.genre.lower()
                 self.genre_by_name[info.genre.lower()] = new_id
-                print(f"Adding genre {info.genre} for {track_id})")
+                print(f"Adding genre {info.genre} for {track_id}")
                 self.cursor.execute(Queries.insert_tag_map, (self.genre_by_name[info.genre.lower()], track_id))
 
     def add_new_track(self, file):

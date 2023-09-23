@@ -43,7 +43,7 @@ class Handler(object):
             print("Failed to connect to the database")
             self.db = None
         else:
-            self.db.autocommit(True)
+            #self.db.autocommit(True)
             self.cursor = self.db.cursor(sql.cursors.DictCursor)
             self.cursor.execute("set time_zone = '-00:00'")
 
@@ -183,18 +183,19 @@ class Handler(object):
 
     def create_database(self):
         from LibScan.mysql_ampache import database_tables, database_constraints, database_creator, catalog_creator, catalog_local_creator
-        self.db.autocommit(True)
+        #self.db.autocommit(True)
         cursor = self.db.cursor()
         print("Creating the database")
         cursor.execute(database_creator % self.database)
         cursor.execute("USE `{}`".format(self.database))
         print("Creating the tables")
-        for table, creator in database_tables.iteritems():
+        for table, creator in database_tables.items():
             print("Creating table {}".format(table))
+            print(creator)
             cursor.execute(creator)
         print("Tables created")
         print("Creating constraints")
-        for table, creator in database_constraints.iteritems():
+        for table, creator in database_constraints.items():
             print("Creating constraint {}".format(table))
             cursor.execute(creator)
         print("Constraints created")
@@ -311,12 +312,12 @@ class Handler(object):
 
     def on_upgrade_dialog_yes_button_clicked(self, *args):
         from LibScan.mysql_ampache import database_tables, database_constraints, database_creator, catalog_creator, catalog_local_creator
-        self.db.autocommit(True)
+        #self.db.autocommit(True)
         cursor = self.db.cursor()
         print("Updating the database")
         #cursor.execute("USE `{}`".format(self.database))
         print("Creating the tables")
-        for table, creator in database_tables.iteritems():
+        for table, creator in database_tables.items():
             print("Creating table {}".format(table))
             try:
                 cursor.execute(creator)
@@ -324,7 +325,7 @@ class Handler(object):
                 print("Table {} already in database".format(table))
         print("Tables created")
         print("Creating constraints")
-        for table, creator in database_constraints.iteritems():
+        for table, creator in database_constraints.items():
             print("Creating constraint {}".format(table))
             try:
                 cursor.execute(creator)

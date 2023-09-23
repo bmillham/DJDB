@@ -408,12 +408,12 @@ database_tables['recommendation_item'] = """CREATE TABLE `recommendation_item` (
 database_tables['requestlist'] = """CREATE TABLE `requestlist` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `songID` int(11) NOT NULL DEFAULT '0',
-  `t_stamp` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `t_stamp` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
   `host` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `msg` text CHARACTER SET utf8,
   `name` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `code` mediumint(9) NOT NULL DEFAULT '0',
-  `ETA` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `ETA` datetime NOT NULL DEFAULT '1000-01-01 00:00:00',
   `status` enum('played','ignored','pending','new') CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `t_stamp` (`t_stamp`),
@@ -527,7 +527,8 @@ database_tables['song'] = """CREATE TABLE `song` (
   KEY `file` (`file`(333)),
   FULLTEXT KEY `idjc` (`title`),
   FULLTEXT KEY `title` (`title`,`file`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
+# ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
 database_tables['song_data'] = """CREATE TABLE `song_data` (
   `song_id` int(11) unsigned NOT NULL,
@@ -598,7 +599,8 @@ database_tables['tag_map'] = """CREATE TABLE `tag_map` (
   KEY `object_type` (`object_type`),
   KEY `user_id` (`user`),
   KEY `tag_id` (`tag_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
+#) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
 
 database_tables['tmp_browse'] = """CREATE TABLE `tmp_browse` (
   `id` int(13) NOT NULL AUTO_INCREMENT,
@@ -641,7 +643,7 @@ database_tables['user'] = """CREATE TABLE `user` (
   `email` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `website` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `apikey` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-  `password` varchar(64) CHARACTER SET utf8 DEFAULT NULL,
+  `password` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
   `access` tinyint(4) unsigned NOT NULL,
   `disabled` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `last_seen` int(11) unsigned NOT NULL DEFAULT '0',
@@ -650,6 +652,18 @@ database_tables['user'] = """CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"""
+
+database_tables['users'] = """CREATE TABLE users (
+	uname varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+	pword varchar(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+	administrator tinyint(1) NULL,
+	spword blob NULL,
+	CONSTRAINT `PRIMARY` PRIMARY KEY (uname)
+)
+ENGINE=MyISAM
+DEFAULT CHARSET=utf8
+COLLATE=utf8_unicode_ci
+COMMENT=''"""
 
 database_tables['user_catalog'] = """CREATE TABLE `user_catalog` (
   `user` int(11) unsigned NOT NULL,
