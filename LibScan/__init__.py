@@ -274,9 +274,9 @@ class LibScan(Handler):
         else:
             self.estimate_completed = True
             self.scan_running = True
-            #task1 = self.scan_files(estimate=False)
+            task1 = self.scan_files(estimate=False)
             GObject.idle_add(task1.__next__)
-        yield False"""
+        yield False
 
     def update_display(self):
         t = time()
