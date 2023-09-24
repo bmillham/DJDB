@@ -35,14 +35,9 @@ valid_filetypes = ["aac", "adif", "adts", "mid", '669', 'amf', 'ams', 'dsm', 'fa
 
 modes = ('abr', 'vbr', 'cbr')
 
-class MyGObject(dict):
-    def __init__(self):
-        pass
-    
-
 class LibScan(Handler):
     def __init__(self, builder, configfile, options, gobject):
-        print('Initilize libscan')
+        print('Initilize libscan', builder)
         self.default_prefixes =  ('the', 'a', 'an', 'die', 'ein', 'le', 'les', 'la')
         self.cursor = None
         self.db = None
@@ -61,11 +56,10 @@ class LibScan(Handler):
         self.files_bad = 0
         self.files_no_tags = 0
         self.new_tracks = 0
-        if not self.options['no_gui']:
-            self.gobject['warningsstore'].clear()
-            self.gobject['changedstore'].clear()
-            self.gobject['button_scan_library'].set_label("Abort Scan")
-            self.gobject['preferences_imagemenuitem'].set_sensitive(False)
+        self.gobject['warningsstore'].clear()
+        self.gobject['changedstore'].clear()
+        self.gobject['button_scan_library'].set_label("Abort Scan")
+        self.gobject['preferences_imagemenuitem'].set_sensitive(False)
 
         if self.full_scan:
             print("Ignoring file time to run full scan")
@@ -113,7 +107,10 @@ class LibScan(Handler):
                         self.estimate_completed = True
                         self.full_scan = False
                         self.cursor.execute("COMMIT")
-                        yield False
+                        if self.options['no_gui']:
+                            pass
+                        else:
+                            x = yield False
                     self.gobject['lblDirectory'].set_text(folder.replace(str(d) + os.path.sep, ""))
                     # Directories begining with .Trash (or .trash etc.) and 0000 are ignored
                     # TODO: add ability to cofigure directories to ignore
@@ -123,7 +120,10 @@ class LibScan(Handler):
                         self.fcount += len(files)
                         self.gobject['est_label'].set_text(str(self.fcount))
                     else:
-                        self.fraction = float(self.fcount) / float(self.estimated_total_files)
+                        try:
+                            self.fraction = float(self.fcount) / float(self.estimated_total_files)
+                        except ZeroDivisionError:
+                            self.fraction = 0.0
                         artists = []
                         for file in files:
                             self.fcount += 1
@@ -210,14 +210,16 @@ class LibScan(Handler):
                                 if info.artist.fullname not in artists:
                                     artists.append(info.artist.fullname)
                                     self.gobject['lblArtist'].set_text(", ".join(artists))
-                                    if len(artists) > 1:
-                                        yield True
+                                    #if len(artists) > 1:
+                                    #    if not self.options['no_gui']:
+                                    #        yield True
                             else:
                                 self.files_no_tags += 1
                             self.update_display()
                         self.cursor.execute("COMMIT")
                         self.gobject['pgrScan'].set_fraction(self.fraction)
-                    yield True
+                    #if not self.options['no_gui']:
+                    #    yield True
             if added_to_catalog:
                 print("Files were added to the catalog")
                 self.cursor.execute(Queries.update_catalog_addition_time, (int(time()), self.catalog_id))
@@ -231,7 +233,8 @@ class LibScan(Handler):
         if not estimate:
             self.gobject['pgrScan'].set_fraction(1.0)
             self.update_display()
-            yield True
+            #if not self.options['no_gui']:
+            #    yield True
             print("Checking for removed songs")
             self.cursor.execute(Queries.select_all_songs)
             to_check = self.cursor.rowcount
@@ -239,7 +242,8 @@ class LibScan(Handler):
             files_not_found = 0
             self.gobject['pgrScan'].set_fraction(0.0)
             self.gobject['pgrScan'].set_text("Checking for removed files")
-            yield True
+            #if not self.options['no_gui']:
+            #    yield True
             for row in self.cursor.fetchall():
                 checked += 1
                 fraction = float(checked) / float(to_check)
@@ -253,17 +257,21 @@ class LibScan(Handler):
                                       'album': row['album_name'],
                                       'title': row['title']})
                     self.cursor.execute(Queries.delete_missing_file, (row['sid'],))
-                    yield True
-                if checked % 25:
-                    yield True
+                    #if not self.options['no_gui']:
+                    #    yield True
+                #if checked % 25:
+                #    if not self.options['no_gui']:
+                #        yield True
             self.gobject['pgrScan'].set_fraction(0.0)
             self.gobject['pgrScan'].set_text("Checking for orphaned albums")
-            yield True
+            #if not self.options['no_gui']:
+            #    yield True
             self.cursor.execute(Queries.delete_orphan_albums)
             self.gobject['albums_removed_label'].set_text(str(self.cursor.rowcount))
             self.gobject['pgrScan'].set_text("Checking for orphaned artists")
             self.gobject['pgrScan'].set_fraction(0.5)
-            yield True
+            #if not self.options['no_gui']:
+            #    yield True
             self.cursor.execute(Queries.delete_orphan_artists)
             self.gobject['artists_removed_label'].set_text(str(self.cursor.rowcount))
             self.gobject['pgrScan'].set_text("Completed")
@@ -274,11 +282,19 @@ class LibScan(Handler):
         else:
             self.estimate_completed = True
             self.scan_running = True
-            task1 = self.scan_files(estimate=False)
-            GObject.idle_add(task1.__next__)
-        yield False
+            #if not self.options['no_gui']:
+            #    task1 = self.scan_files(estimate=False)
+            #    GObject.idle_add(task1.__next__)
+        print('nogui', self.options['no_gui'])
+        if not self.options['no_gui']:
+            pass
+            #yield False
+        else:
+            print('no gui')
 
     def update_display(self):
+        if self.options['no_gui']:
+            return
         t = time()
         self.ave2 = (t - self.start_time) / self.fcount
         self.fleft = self.estimated_total_files - self.fcount
@@ -472,7 +488,8 @@ class LibScan(Handler):
         self.gobject['deleted_prefixes_label'].set_text(", ".join(self.deleted))
         self.gobject['added_prefixes_label'].set_text(", ".join(self.added))
         self.gobject['prefix_progressbar'].set_fraction(0.0)
-        yield True
+        #if not self.options['no_gui']:
+        #    yield True
         for table in ('artist', 'album'):
             for p in self.deleted:
                 self.cursor.execute(Queries.get_prefixes_to_delete.format(table), (p,))
@@ -484,7 +501,8 @@ class LibScan(Handler):
                         name = row['prefix'] + " " + row['name']
                         self.cursor.execute(Queries.update_deleted_prefix.format(table), (name, row['id']))
                         self.gobject['prefix_progressbar'].set_fraction(count / total)
-                        yield True
+                        #if not self.options['no_gui']:
+                        #    yield True
             for p in self.added:
                 pp = p + " %"
                 self.cursor.execute(Queries.get_prefixes_to_add.format(table), (pp,))
@@ -500,8 +518,10 @@ class LibScan(Handler):
                         else:
                             self.cursor.execute(Queries.update_added_prefix.format(table), (name, prefix, row['id']))
                         self.gobject['prefix_progressbar'].set_fraction(count / total)
-                        yield True
+                        #if not self.options['no_gui']:
+                        #    yield True
         self.gobject['prefix_progressbar'].set_fraction(0.0)
         self.gobject['prefix_progressbar'].set_text('Completed')
         self.gobject['prefix_change_messagedialog'].hide()
-        yield False
+        #if not self.options['no_gui']:
+        #    yield False

@@ -23,21 +23,49 @@ glade_objects = ('main_window', 'lblDirectory', 'lblCatalog', 'lblArtist', 'lblA
 field_names = ('server', 'database', 'user', 'password')
 assistant_object_names = ('assistant_db_entry', 'import_db_entry', 'import_db_label', 'new_db_label')
 
+class MyGObject(object):
+    """ Mimic a gobject basic functions with basic features that print
+        instead of updating a gui. Used with the --no-gui option """
+    def __init__(self):
+        pass # Don't need to do anything on init
+
+    """ Fake gobject methods here that just print """
+    def set_text(self, text):
+        print(text)
+
+    def set_label(self, text):
+        print(text)
+
+    def clear(self):
+        pass # Don't need to do anything here
+
+    def set_sensitive(self, value):
+        pass
+
+    def set_fraction(self, value):
+        pass
+
+    def hide(self):
+        pass
+
 def get_glade_objects(builder):
     gobject = {}
     for o in glade_objects:
-        gobject[o] = builder.get_object(o)
+        if not builder:
+            gobject[o] = MyGObject()
+        else:
+            gobject[o] = builder.get_object(o)
         if gobject[o] is None:
             print("WARNING: object {} not found".format(o))
 
     for o in assistant_object_names:
         gobject[o] = {}
         for f in field_names:
-            gobject[o][f] = builder.get_object("{0}_{1}".format(o,f))
-        #assistant_db_entry[f] = get_object("assistant_db_entry_{0}".format(f))
-        #self.import_db_entry[f] = get_object("import_db_entry_{0}".format(f))
-        #self.import_db_label[f] = get_object("import_db_label_{0}".format(f))
-        #self.new_db_label[f] = get_object("new_db_label_{0}".format(f))
+            if not builder:
+                gobject[o][f] = MyGObject()
+            else:
+                gobject[o][f] = builder.get_object("{0}_{1}".format(o,f))
+
     gobject['FIELD_NAMES'] = field_names
     gobject['ASSISTANT_OBJECT_NAMES'] = assistant_object_names
     return gobject
